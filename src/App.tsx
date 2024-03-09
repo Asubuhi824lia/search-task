@@ -5,19 +5,38 @@ import {
   SearchContext,
 } from "./components/SearchResults/SearchContext";
 import { SearchResults } from "./components/SearchResults/SearchResults";
-import getUsers, { baseUrl } from "./api";
+import { baseUrl, handleGetUsers } from "./api";
+import { StatusContext } from "./components/SearchResults/StatusContext";
 
 export default function App() {
   const [users, setUsers] = useState<UserType[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const setStatuses = (loading: boolean, error: string) => {
+    setLoading(loading);
+    setError(error);
+  };
 
   useEffect(() => {
-    getUsers(baseUrl).then(setUsers);
+    handleGetUsers(baseUrl, setStatuses).then((data) =>
+      typeof data !== "string" ? setUsers(data) : setUsers(users)
+    );
   }, []);
 
   return (
     <SearchContext.Provider value={{ users, setUsers }}>
-      <SearchForm />
-      <SearchResults />
+      <StatusContext.Provider
+        value={{
+          loading,
+          setLoading,
+          error,
+          setError,
+        }}
+      >
+        <SearchForm />
+        <SearchResults />
+      </StatusContext.Provider>
     </SearchContext.Provider>
   );
 }

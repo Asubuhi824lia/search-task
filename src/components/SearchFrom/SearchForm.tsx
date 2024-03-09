@@ -1,19 +1,30 @@
 import "./styles.css";
 import { useContext, useEffect, useState } from "react";
 import debounce from "debounce";
-import getUsers, { baseUrl } from "../../api";
+import { baseUrl, handleGetUsers } from "../../api";
 import { SearchContext } from "../SearchResults/SearchContext";
+import { StatusContext } from "../SearchResults/StatusContext";
 
 export function SearchForm() {
-  const { setUsers } = useContext(SearchContext);
+  const { users, setUsers } = useContext(SearchContext);
   const [value, setValue] = useState<string>("");
+  const { setLoading, setError } = useContext(StatusContext);
+
+  const setStatuses = (loading: boolean, error: string) => {
+    setLoading(loading);
+    setError(error);
+  };
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
   };
 
   useEffect(() => {
-    debounce(() => getUsers(`${baseUrl}/search?q=${value}`).then(setUsers))();
+    debounce(async () => {
+      handleGetUsers(`${baseUrl}/search?q=${value}`, setStatuses).then((data) =>
+        typeof data !== "string" ? setUsers(data) : setUsers(users)
+      );
+    }, 500)();
   }, [value]);
 
   return (
