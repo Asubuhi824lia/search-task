@@ -10,9 +10,12 @@ export function SearchForm() {
   const [value, setValue] = useState<string>("");
   const { setLoading, setError } = useContext(StatusContext);
 
-  const setStatuses = (loading: boolean, error: string) => {
+  const setStatuses = (
+    loading: boolean,
+    error: string | undefined = undefined
+  ) => {
     setLoading(loading);
-    setError(error);
+    error ?? setError(error);
   };
 
   const changeHandler = (e: React.ChangeEvent<HTMLInputElement>) => {

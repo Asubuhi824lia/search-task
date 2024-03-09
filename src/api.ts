@@ -33,11 +33,11 @@ export async function getUsers(url: string): Promise<UserType[] | string> {
 
 export async function handleGetUsers(
   url: string,
-  setStatuses: (loading: boolean, error: string) => void
+  setStatuses: (loading: boolean, error: string | undefined) => void
 ) {
-  setStatuses(true, "");
+  setStatuses(true);
   const data = await getUsers(url);
-  setStatuses(false, typeof data == "string" ? data : "");
+  setStatuses(false, typeof data === "string" ? data : "");
 
   return data;
 }

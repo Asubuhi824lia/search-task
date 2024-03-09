@@ -13,9 +13,12 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const setStatuses = (loading: boolean, error: string) => {
+  const setStatuses = (
+    loading: boolean,
+    error: string | undefined = undefined
+  ) => {
     setLoading(loading);
-    setError(error);
+    error ?? setError(error);
   };
 
   useEffect(() => {
